@@ -38,28 +38,25 @@
 // customers consists only of characters 'Y' and 'N'.
 
 pub fn best_closing_time() {
-    let customers = String::from("YYNY");
-    solve(customers);
+    let customers = String::from("YYNNY");
+    let ans = solve(customers);
+    print!(" Ans is {}", ans);
 }
 
 fn solve(customers: String) -> i32 {
-    let mut penalty = 0;
-    let mut min_penalty = 0;
-    let mut min_penalty_hour = 0;
-    let mut is_open = false;
+    let mut max_score = 0;
+    let mut score = 0;
+    let mut best_hour = -1;
     for (i, c) in customers.chars().enumerate() {
         if c == 'Y' {
-            penalty += 1;
-            is_open = true;
+            score += 1;
         } else {
-            if is_open {
-                penalty += 1;
-            }
+            score -= 1;
         }
-        if penalty > min_penalty {
-            min_penalty = penalty;
-            min_penalty_hour = i;
+        if score > max_score {
+            max_score = score;
+            best_hour = i as i32;
         }
     }
-    min_penalty_hour as i32
+    best_hour + 1
 }
