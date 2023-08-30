@@ -39,8 +39,7 @@
 
 pub fn best_closing_time() {
     let customers = String::from("YYNNY");
-    let ans = solve(customers);
-    print!(" Ans is {}", ans);
+    solve(customers);
 }
 
 fn solve(customers: String) -> i32 {
