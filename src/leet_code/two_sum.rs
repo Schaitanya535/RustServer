@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-pub fn two_sum() -> Vec<i32> {
-    solve(vec![2, 7, 11, 15], 9)
+pub fn solve() -> Vec<i32> {
+    two_sum(vec![2, 7, 11, 15], 9)
 }
 
-fn solve(nums: Vec<i32>, target: i32) -> Vec<i32> {
+fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
     let mut result: Vec<i32> = Vec::new();
     let mut map: HashMap<i32, i32> = HashMap::new();
     for i in 0..nums.len() {

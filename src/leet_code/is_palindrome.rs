@@ -1,9 +1,9 @@
-pub fn is_palindrome() {
+pub fn solve() {
     let x = 121;
-    solve(x);
+    is_palindrome(x);
 }
 
-fn solve(x: i32) -> bool {
+fn is_palindrome(x: i32) -> bool {
     if x < 0 {
         return false;
     }

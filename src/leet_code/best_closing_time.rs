@@ -37,12 +37,12 @@
 // 1 <= customers.length <= 105
 // customers consists only of characters 'Y' and 'N'.
 
-pub fn best_closing_time() {
+pub fn solve() {
     let customers = String::from("YYNNY");
-    solve(customers);
+    best_closing_time(customers);
 }
 
-fn solve(customers: String) -> i32 {
+fn best_closing_time(customers: String) -> i32 {
     let mut max_score = 0;
     let mut score = 0;
     let mut best_hour = -1;
