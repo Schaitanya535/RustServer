@@ -16,7 +16,21 @@ fn avg_salary(salaries: Vec<i32>) -> f64 {
     return ((sum - min - max) as f64) / ((salaries.len() - 2) as f64);
 }
 
+fn build_array(nums: Vec<i32>) -> Vec<i32> {
+    let mut ans: Vec<i32> = Vec::with_capacity(nums.len());
+    for &i in nums.iter() {
+        ans.push(nums[i as usize]);
+    }
+    ans
+}
+
 pub fn solve() {
-    avg_salary(vec![1000, 2000, 3000]);
-    // println!("{}", ans);
+    let vector = vec![1000, 2000, 3000];
+    let vector2 = vec![0, 2, 1];
+    avg_salary(vector);
+    build_array(vector2);
+    // let arr1 = vec![1, 2, 3];
+    // let mut arr1 = arr1;
+    // let arr2: Vec<i32> = vec![3, 4, 4];
+    // arr1.extend(arr2);
 }
