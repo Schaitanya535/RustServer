@@ -10,4 +10,5 @@ pub fn leet_code() {
     is_palindrome::solve();
     counting_bits::solve();
     two_sum::solve();
+    extra_characters_in_string::solve();
 }

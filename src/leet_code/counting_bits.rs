@@ -7,6 +7,6 @@ fn count_bits(n: i32) -> Vec<i32> {
 }
 
 pub fn solve() {
-    let ans = count_bits(30);
-    ans.iter().for_each(|i| print!("{}", i));
+    count_bits(30);
+    // ans.iter().for_each(|i| print!("{}", i));
 }
