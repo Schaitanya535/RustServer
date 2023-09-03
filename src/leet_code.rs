@@ -3,8 +3,10 @@ pub mod best_closing_time;
 pub mod counting_bits;
 pub mod extra_characters_in_string;
 pub mod height_balanced_bst;
+pub mod insert_gcd_linked_list;
 pub mod is_palindrome;
 pub mod two_sum;
+pub mod unique_paths;
 
 pub fn leet_code() {
     best_closing_time::solve();
@@ -15,4 +17,5 @@ pub fn leet_code() {
     extra_characters_in_string::solve();
     avg_salary::solve();
     height_balanced_bst::solve();
+    unique_paths::solve();
 }

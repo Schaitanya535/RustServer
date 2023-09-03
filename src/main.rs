@@ -1,6 +1,8 @@
 // use axum::{routing::get, Router};
 // use std::net::SocketAddr;
 mod leet_code;
+#[allow(dead_code)]
+mod utils;
 
 #[tokio::main]
 async fn main() {
