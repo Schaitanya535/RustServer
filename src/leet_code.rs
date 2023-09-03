@@ -8,7 +8,7 @@ pub mod is_palindrome;
 pub mod two_sum;
 pub mod unique_paths;
 
-pub fn leet_code() {
+pub fn main() {
     best_closing_time::solve();
     counting_bits::solve();
     is_palindrome::solve();
