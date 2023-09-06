@@ -1,7 +1,7 @@
 pub fn solve() {
     // let ans = min_partitions("12346668".to_owned());
-    let ans = min_partitions_2("12346668".to_owned());
-    println!("min num of partitions {}", ans);
+    min_partitions_2("12346668".to_owned());
+    // println!("min num of partitions {}", ans);
 }
 
 pub fn min_partitions(n: String) -> i32 {
