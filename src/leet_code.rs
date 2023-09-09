@@ -1,5 +1,6 @@
 pub mod avg_salary;
 pub mod best_closing_time;
+pub mod combination_sum;
 pub mod counting_bits;
 pub mod deci_binary_partition;
 pub mod extra_characters_in_string;
@@ -24,4 +25,5 @@ pub fn main() {
     deci_binary_partition::solve();
     split_linked_list::solve();
     pascal_triangle::solve();
+    combination_sum::solve();
 }

@@ -1,6 +1,6 @@
 pub fn solve() {
-    let ans = generate(5);
-    println!("pascal triangle is:  {:?}", ans);
+    generate(5);
+    // println!("pascal triangle is:  {:?}", ans);
 }
 
 pub fn generate(num_rows: i32) -> Vec<Vec<i32>> {
