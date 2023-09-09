@@ -7,7 +7,9 @@ pub mod extra_characters_in_string;
 pub mod height_balanced_bst;
 pub mod insert_gcd_linked_list;
 pub mod is_palindrome;
+pub mod jewels_stones;
 pub mod pascal_triangle;
+pub mod shuffle;
 pub mod split_linked_list;
 pub mod two_sum;
 pub mod unique_paths;
@@ -26,4 +28,5 @@ pub fn main() {
     split_linked_list::solve();
     pascal_triangle::solve();
     combination_sum::solve();
+    jewels_stones::solve()
 }
