@@ -1,3 +1,5 @@
+pub const MOD: i64 = 1000_000_000 + 7;
+
 pub fn combinations(n: i64, r: i64) -> i64 {
     (1..r.min(n - r)).fold(1, |acc, val| (acc * (n - val) / val))
 }
@@ -8,4 +10,22 @@ pub fn gcd(a: i32, b: i32) -> i32 {
         return b.min(a);
     }
     return gcd(reminder, b.min(a));
+}
+
+pub fn pow_mod(base: i32, exp: i32) -> i32 {
+    let mut base = base as i64;
+    let mut exp = exp;
+    let mut result = 1;
+    while exp > 0 {
+        if exp & 1 > 0 {
+            result = (result * base) % MOD;
+        }
+        base = (base * base) % MOD;
+        exp = exp >> 1;
+    }
+    (result % MOD) as i32
+}
+
+pub fn factorial(n: i32) -> i32 {
+    (1..=(n as i64)).fold(1 as i64, |acc: i64, i| (acc * i) % MOD) as i32
 }
