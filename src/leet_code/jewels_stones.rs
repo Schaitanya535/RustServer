@@ -1,6 +1,5 @@
 pub fn solve() {
-    let ans = num_jewels_in_stones("A".to_owned(), "aAAbbbb".to_owned());
-    println!("Number of jewels in stones are {}", ans);
+    num_jewels_in_stones("A".to_owned(), "aAAbbbb".to_owned());
 }
 
 pub fn num_jewels_in_stones(jewels: String, stones: String) -> i32 {

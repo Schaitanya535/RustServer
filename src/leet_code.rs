@@ -5,6 +5,7 @@ pub mod count_order;
 pub mod counting_bits;
 pub mod deci_binary_partition;
 pub mod extra_characters_in_string;
+pub mod goal_interpreter;
 pub mod height_balanced_bst;
 pub mod insert_gcd_linked_list;
 pub mod is_palindrome;
@@ -31,4 +32,5 @@ pub fn main() {
     combination_sum::solve();
     jewels_stones::solve();
     count_order::solve();
+    goal_interpreter::solve();
 }
