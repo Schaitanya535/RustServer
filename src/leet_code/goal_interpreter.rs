@@ -27,6 +27,43 @@ pub fn interpret(command: String) -> String {
     ans
 }
 
+pub fn maximum_wealth(accounts: Vec<Vec<i32>>) -> i32 {
+    accounts.iter().map(|x| x.iter().sum()).max().unwrap()
+}
+
 pub fn interpret2(command: String) -> String {
     command.replace("()", "o").replace("(al)", "al")
+}
+
+pub fn smaller_numbers_than_current(nums: Vec<i32>) -> Vec<i32> {
+    nums.iter()
+        .map(|&x| nums.iter().filter(|&&y| x > y).count() as i32)
+        .collect()
+}
+
+pub fn most_words_found(sentences: Vec<String>) -> i32 {
+    sentences
+        .iter()
+        .map(|sentence| sentence.split_whitespace().count() as i32)
+        .max()
+        .unwrap()
+}
+
+pub fn subtract_product_and_sum(n: i32) -> i32 {
+    let (sum, prod) = n
+        .to_string()
+        .chars()
+        .map(|c| c.to_digit(10).unwrap() as i32)
+        .fold((0, 1), |(sum, prod), i| (sum + i, prod * i));
+    prod - sum
+}
+
+pub fn minimum_sum(num: i32) -> i32 {
+    let mut vec: Vec<i32> = num
+        .to_string()
+        .chars()
+        .map(|x| x.to_digit(10).unwrap_or(0) as i32)
+        .collect();
+    vec.sort();
+    vec[2] + 10 * vec[0] + 10 * vec[1] + vec[3]
 }
