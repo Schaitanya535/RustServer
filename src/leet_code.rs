@@ -1,6 +1,7 @@
 pub mod avg_salary;
 pub mod best_closing_time;
 pub mod combination_sum;
+pub mod connect_points;
 pub mod count_order;
 pub mod counting_bits;
 pub mod deci_binary_partition;
