@@ -67,3 +67,58 @@ pub fn minimum_sum(num: i32) -> i32 {
     vec.sort();
     vec[2] + 10 * vec[0] + 10 * vec[1] + vec[3]
 }
+
+pub fn xor_operation(n: i32, start: i32) -> i32 {
+    (0..n).fold(0, |val, curr| (val) ^ (curr * 2 + start))
+}
+
+pub fn decode(encoded: Vec<i32>, first: i32) -> Vec<i32> {
+    let mut decoded = vec![first];
+    encoded.iter().fold(first, |acc, curr| {
+        let next = acc ^ curr;
+        decoded.push(next);
+        next
+    });
+    decoded
+}
+
+pub fn left_right_difference_2(nums: Vec<i32>) -> Vec<i32> {
+    let len = nums.len();
+    let left = nums.iter().take(len - 1).fold(vec![0], |mut acc, curr| {
+        acc.push(acc.last().unwrap() + curr);
+        acc
+    });
+    let right: Vec<i32> = nums
+        .into_iter()
+        .rev()
+        .take(len - 1)
+        .fold(vec![0], |mut acc, curr| {
+            acc.push(acc.last().unwrap() + curr);
+            acc
+        })
+        .into_iter()
+        .rev()
+        .collect();
+    // std::iter::zip(left, right)
+    left.iter()
+        .zip(right)
+        .into_iter()
+        .map(|(a, b)| (a - b).abs())
+        .collect()
+}
+
+pub fn left_right_difference(nums: Vec<i32>) -> Vec<i32> {
+    if nums.len() == 1 {
+        return vec![0];
+    };
+    let mut ans = vec![0; nums.len()];
+    for i in 1..nums.len() {
+        ans[i] = ans[i - 1] + nums[i - 1];
+    }
+    let mut acc = 0;
+    for i in (0..=(nums.len() - 2)).rev() {
+        acc += nums[i + 1];
+        ans[i] = (ans[i] - acc).abs()
+    }
+    ans
+}

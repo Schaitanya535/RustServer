@@ -11,6 +11,7 @@ pub mod height_balanced_bst;
 pub mod insert_gcd_linked_list;
 pub mod is_palindrome;
 pub mod jewels_stones;
+pub mod min_effort_path;
 pub mod pascal_triangle;
 pub mod shuffle;
 pub mod split_linked_list;
@@ -22,6 +23,8 @@ pub fn main() {
     counting_bits::solve();
     is_palindrome::solve();
     counting_bits::solve();
+    connect_points::solve();
+    min_effort_path::solve();
     two_sum::solve();
     extra_characters_in_string::solve();
     avg_salary::solve();
