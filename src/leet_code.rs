@@ -11,6 +11,7 @@ pub mod height_balanced_bst;
 pub mod insert_gcd_linked_list;
 pub mod is_palindrome;
 pub mod jewels_stones;
+pub mod k_weakest_rows;
 pub mod min_effort_path;
 pub mod pascal_triangle;
 pub mod shuffle;
@@ -37,4 +38,5 @@ pub fn main() {
     jewels_stones::solve();
     count_order::solve();
     goal_interpreter::solve();
+    k_weakest_rows::solve();
 }
