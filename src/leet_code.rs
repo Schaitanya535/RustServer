@@ -16,6 +16,7 @@ pub mod min_effort_path;
 pub mod pascal_triangle;
 pub mod shuffle;
 pub mod split_linked_list;
+pub mod sum_even_grandparent;
 pub mod two_sum;
 pub mod unique_paths;
 
