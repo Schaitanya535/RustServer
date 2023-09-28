@@ -14,6 +14,7 @@ pub mod jewels_stones;
 pub mod k_weakest_rows;
 pub mod min_effort_path;
 pub mod pascal_triangle;
+pub mod remove_duplicate_letters;
 pub mod shuffle;
 pub mod split_linked_list;
 pub mod sum_even_grandparent;
@@ -40,4 +41,5 @@ pub fn main() {
     count_order::solve();
     goal_interpreter::solve();
     k_weakest_rows::solve();
+    remove_duplicate_letters::solve();
 }
