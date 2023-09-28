@@ -14,17 +14,18 @@ pub fn remove_duplicate_letters(s: String) -> String {
         last_seen.insert(char, i);
     }
     for (i, char) in s.char_indices() {
-        if !seen.contains(&char) {
-            while let Some(&top) = stack.last() {
-                if (char < top) && (i < *last_seen.get(&char).unwrap()) {
-                    seen.remove(&stack.pop().unwrap());
-                } else {
-                    break;
-                }
-            }
-            stack.push(char);
-            seen.insert(char);
+        if seen.contains(&char) {
+            continue;
         }
+        while let Some(&top) = stack.last() {
+            if (char < top) && (i < *last_seen.get(&top).unwrap()) {
+                seen.remove(&stack.pop().unwrap());
+            } else {
+                break;
+            }
+        }
+        stack.push(char);
+        seen.insert(char);
     }
     stack.into_iter().collect()
 }
