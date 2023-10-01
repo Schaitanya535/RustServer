@@ -16,6 +16,7 @@ pub mod min_effort_path;
 pub mod pascal_triangle;
 pub mod remove_duplicate_letters;
 pub mod shuffle;
+pub mod sort_arr_by_parity;
 pub mod split_linked_list;
 pub mod sum_even_grandparent;
 pub mod two_sum;
@@ -42,4 +43,5 @@ pub fn main() {
     goal_interpreter::solve();
     k_weakest_rows::solve();
     remove_duplicate_letters::solve();
+    sort_arr_by_parity::solve();
 }
