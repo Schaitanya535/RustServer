@@ -16,6 +16,7 @@ impl TreeNode {
     }
 }
 use std::cell::RefCell;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 pub fn solve() {
@@ -36,4 +37,12 @@ fn driver(nums: &Vec<i32>, low: i32, high: i32) -> Option<Rc<RefCell<TreeNode>>>
     head.left = driver(nums, low, mid);
     head.right = driver(nums, mid + 1, high);
     Some(Rc::new(RefCell::new(head)))
+}
+
+fn unique_occurrences(arr: Vec<i32>) -> bool {
+    let (mut map, mut set) = (HashMap::new(), HashSet::new());
+    arr.into_iter().for_each(|x| {
+        map.entry(x).and_modify(|x| *x += 1).or_insert(1);
+    });
+    map.values().all(|x| set.insert(*x))
 }
