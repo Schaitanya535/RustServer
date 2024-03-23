@@ -13,6 +13,7 @@ pub mod is_palindrome;
 pub mod jewels_stones;
 pub mod k_weakest_rows;
 pub mod min_effort_path;
+pub mod num_ways;
 pub mod pascal_triangle;
 pub mod remove_duplicate_letters;
 pub mod shuffle;
@@ -44,4 +45,5 @@ pub fn main() {
     k_weakest_rows::solve();
     remove_duplicate_letters::solve();
     sort_arr_by_parity::solve();
+    num_ways::solve();
 }
