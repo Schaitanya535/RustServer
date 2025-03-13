@@ -1,12 +1,5 @@
-
 pub fn solve() {
-    num_ways(3, 3);
     min_cost_climbing_stairs(vec![10, 15, 20]);
-}
-
-pub fn num_ways(steps: i32, arr_len: i32) -> i32 {
-    let ans = 0;
-    ans
 }
 
 pub fn min_cost_climbing_stairs(cost: Vec<i32>) -> i32 {
