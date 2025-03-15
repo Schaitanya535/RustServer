@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct TreeNode {
     pub val: i32,
     pub left: Option<Rc<RefCell<TreeNode>>>,
@@ -25,6 +25,18 @@ pub fn solve() {
 
 pub fn sorted_array_to_bst(nums: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
     driver(&nums, 0, nums.len() as i32)
+}
+
+fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) {
+    match root {
+        Some(root) => {
+            let borrowed_root = root.borrow();
+            inorder_traversal(borrowed_root.left.clone());
+            println!("{}", borrowed_root.val);
+            inorder_traversal(borrowed_root.right.clone());
+        }
+        None => {}
+    }
 }
 
 fn driver(nums: &Vec<i32>, low: i32, high: i32) -> Option<Rc<RefCell<TreeNode>>> {
