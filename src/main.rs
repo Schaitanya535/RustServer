@@ -11,13 +11,15 @@ mod playground;
 #[allow(dead_code)]
 mod utils;
 
+#[allow(dead_code)]
 mod stdio_transport;
 
+#[allow(unused_variables)]
 mod lsp;
 
 #[tokio::main]
 async fn main() {
-    leet_code::main();
+    // leet_code::main();
 
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();
