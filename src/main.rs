@@ -24,7 +24,10 @@ async fn main() {
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();
 
-    let (service, socket) = LspService::new(|client| Backend { client });
+    let (service, socket) = LspService::new(|client| Backend {
+        client,
+        log_file_path: "/Users/chaitanyasura/projects/RustServer/log.txt".to_string(),
+    });
     Server::new(stdin, stdout, socket).serve(service).await;
     // let rx = stdio_transport::StdioTransport::new().read_messages();
 

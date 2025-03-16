@@ -1,7 +1,33 @@
+use std::{fs::OpenOptions, io::Write};
+
 use tower_lsp::{jsonrpc::Result, lsp_types::*, Client, LanguageServer};
 
 pub struct Backend {
     pub client: Client,
+    pub log_file_path: String,
+}
+
+impl Backend {
+    fn log(&self, message: &str) {
+        let utc_time = chrono::Utc::now();
+
+        let log_entry = format!(
+            "{timestamp}, {bytes} bytes: {message}\n",
+            timestamp = utc_time,
+            bytes = message.len(),
+            message = message
+        );
+
+        if let Ok(mut file) = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&self.log_file_path)
+        {
+            let _ = file.write_all(log_entry.as_bytes());
+        } else {
+            eprintln!("Failed to write to log file");
+        }
+    }
 }
 
 #[tower_lsp::async_trait]
@@ -27,12 +53,14 @@ impl LanguageServer for Backend {
     }
 
     async fn initialized(&self, _: InitializedParams) {
+        self.log("Initialized");
         self.client
             .log_message(MessageType::INFO, "Server fully initialized!")
             .await;
     }
 
     async fn shutdown(&self) -> Result<()> {
+        self.log("Shutdown");
         self.client
             .log_message(MessageType::INFO, "Server shutting down.")
             .await;
