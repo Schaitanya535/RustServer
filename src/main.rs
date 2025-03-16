@@ -1,6 +1,9 @@
 // use axum::{routing::get, Router};
 // use std::net::SocketAddr;
 
+use lsp::server::Backend;
+use tower_lsp::{LspService, Server};
+
 #[allow(dead_code)]
 mod leet_code;
 #[allow(dead_code)]
@@ -16,20 +19,16 @@ mod lsp;
 async fn main() {
     leet_code::main();
 
-    let rx = stdio_transport::StdioTransport::new().read_messages();
+    let stdin = tokio::io::stdin();
+    let stdout = tokio::io::stdout();
 
-    for message in rx {
-        // thread::spawn(move || {
-        println!("Received message: {}", message);
-        // })
-    }
+    let (service, socket) = LspService::new(|client| Backend { client });
+    Server::new(stdin, stdout, socket).serve(service).await;
+    // let rx = stdio_transport::StdioTransport::new().read_messages();
 
-    // playground::trying_flatten()
-
-    // let app = Router::new().route("/", get(|| async { "Hello, World!" }));
-    // let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    // axum::Server::bind(&addr)
-    //     .serve(app.into_make_service())
-    //     .await
-    //     .unwrap();
+    // for message in rx {
+    //     // thread::spawn(move || {
+    //     println!("Received message: {}", message);
+    //     // })
+    // }
 }
