@@ -60,7 +60,7 @@ impl LanguageServer for Backend {
     }
 
     async fn shutdown(&self) -> Result<()> {
-        self.log("Shutdown");
+        self.log("Shutting down");
         self.client
             .log_message(MessageType::INFO, "Server shutting down.")
             .await;
@@ -81,6 +81,7 @@ impl LanguageServer for Backend {
 
     async fn hover(&self, params: HoverParams) -> Result<Option<Hover>> {
         let position = params.text_document_position_params.position;
+        self.log(format!("Hover requested at position: {:?}", position).as_str());
         self.client
             .log_message(
                 MessageType::INFO,
@@ -88,9 +89,7 @@ impl LanguageServer for Backend {
             )
             .await;
 
-        let contents = HoverContents::Scalar(MarkedString::String(
-            "This is a hover response!".to_string(),
-        ));
+        let contents = HoverContents::Scalar(MarkedString::String("Hover!".to_string()));
 
         Ok(Some(Hover {
             contents,
