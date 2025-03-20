@@ -17,6 +17,9 @@ mod stdio_transport;
 #[allow(unused_variables)]
 mod lsp;
 
+#[allow(dead_code)]
+mod data_structures;
+
 #[tokio::main]
 async fn main() {
     // leet_code::main();
