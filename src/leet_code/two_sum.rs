@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, iter::zip, slice::Windows};
 
 pub fn solve() -> Vec<i32> {
     two_sum(vec![2, 7, 11, 15], 9)
@@ -18,4 +18,15 @@ fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
         }
     }
     result
+}
+
+fn score_of_string(s: String) -> i32 {
+    /* zip(s.chars(), s.chars().skip(1))
+    .map(|(a, b)| (a as i32 - b as i32).abs())
+    .sum() */
+
+    s.as_bytes()
+        .windows(2)
+        .map(|w| (w[0] as i32 - w[1] as i32).abs())
+        .sum()
 }
