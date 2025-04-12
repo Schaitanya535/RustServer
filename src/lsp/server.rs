@@ -1,5 +1,6 @@
 use std::{fs::OpenOptions, io::Write};
 
+use serde::Serialize;
 use tower_lsp::{jsonrpc::Result, lsp_types::*, Client, LanguageServer};
 
 pub struct Backend {
@@ -87,7 +88,7 @@ impl LanguageServer for Backend {
     }
 
     async fn hover(&self, params: HoverParams) -> Result<Option<Hover>> {
-        let position = params.text_document_position_params.position;
+        let position = params.text_document_position_params.text_document;
         self.log(format!("Hover requested at position: {:?}", position).as_str());
         self.client
             .log_message(
