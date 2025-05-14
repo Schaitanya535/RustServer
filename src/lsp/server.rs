@@ -1,6 +1,7 @@
 use crate::lsp::parser::parser;
 use crate::lsp::src_tree::*;
 
+use axum::http::uri;
 use dashmap::mapref::one::Ref;
 use dashmap::DashMap;
 use std::sync::RwLock;
@@ -9,7 +10,7 @@ use std::{fs::OpenOptions, io::Write};
 use chrono::format;
 use serde::Serialize;
 use tower_lsp::{
-    jsonrpc::Result,
+    jsonrpc::{Error, Result},
     lsp_types::{
         notification::DidChangeTextDocument,
         request::{GotoDeclarationParams, GotoDeclarationResponse},
@@ -19,10 +20,10 @@ use tower_lsp::{
 };
 
 pub struct Backend {
-    client: Client,
-    workspace: RwLock<Option<Url>>,
-    document_map: DashMap<Url, SrcTree>,
-    log_file_path: String,
+    pub client: Client,
+    pub workspace: RwLock<Option<Url>>,
+    pub document_map: DashMap<Url, SrcTree>,
+    pub log_file_path: String,
 }
 
 impl Backend {
@@ -143,6 +144,8 @@ impl LanguageServer for Backend {
                     ..Default::default()
                 }),
                 hover_provider: Some(HoverProviderCapability::Simple(true)),
+                declaration_provider: Some(DeclarationCapability::Simple(true)),
+                definition_provider: Some(OneOf::Left(true)),
                 ..Default::default()
             },
             server_info: Some(ServerInfo {
@@ -171,7 +174,79 @@ impl LanguageServer for Backend {
         &self,
         params: GotoDeclarationParams,
     ) -> Result<Option<GotoDeclarationResponse>> {
-        Ok(Some({ GotoDefinitionResponse::Link(Vec::new()) }))
+        // self.client
+        //     .log_message(MessageType::INFO, "goto_definition")
+        //     .await;
+        //
+        // let src_tree = self
+        //     .document_map
+        //     .get(&params.text_document_position_params.text_document.uri)
+        //     .ok_or_else(|| Error::invalid_params("unknown uri"))?;
+        //
+        // let root = src_tree.tree().root_node();
+        // let p = tree_sitter::Point {
+        //     row: params.text_document_position_params.position.line as _,
+        //     column: params.text_document_position_params.position.character as _,
+        // };
+        // let Some(node) = root.descendant_for_point_range(p, p) else {
+        //     return Ok(None);
+        // };
+        //
+        // if node.kind() != "ident" && node.kind() != "type" {
+        //     return Ok(None);
+        // }
+        //
+        // let ident = node
+        //     .utf8_text(src_tree.src().as_bytes())
+        //     .unwrap()
+        //     .to_string();
+        //
+        // drop(src_tree);
+        //
+        Ok(Some(GotoDeclarationResponse::Scalar(Location {
+            uri: params.text_document_position_params.text_document.uri,
+            range: Range {
+                start: Position {
+                    line: 1,
+                    character: 1,
+                },
+                end: Position {
+                    line: 1,
+                    character: 5,
+                },
+            },
+        })))
+
+        // if let Some(def) = self.definition(
+        //     params.text_document_position_params.text_document.uri,
+        //     &ident,
+        // ) {
+        //     Ok(Some(GotoDefinitionResponse::Scalar(Location {
+        //         uri: def.url,
+        //         range: def.range,
+        //     })))
+        // } else {
+        //     Ok(None)
+        // }
+    }
+
+    async fn goto_definition(
+        &self,
+        params: GotoDefinitionParams,
+    ) -> Result<Option<GotoDefinitionResponse>> {
+        Ok(Some(GotoDefinitionResponse::Scalar(Location {
+            uri: params.text_document_position_params.text_document.uri,
+            range: Range {
+                start: Position {
+                    line: 1,
+                    character: 1,
+                },
+                end: Position {
+                    line: 1,
+                    character: 5,
+                },
+            },
+        })))
     }
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {

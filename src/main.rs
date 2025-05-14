@@ -1,6 +1,9 @@
 // use axum::{routing::get, Router};
 // use std::net::SocketAddr;
 
+use std::sync::RwLock;
+
+use dashmap::DashMap;
 use lsp::server::Backend;
 use tower_lsp::{LspService, Server};
 
@@ -30,6 +33,8 @@ async fn main() {
     let (service, socket) = LspService::new(|client| Backend {
         client,
         log_file_path: "/Users/chaitanyasura/projects/RustServer/log.txt".to_string(),
+        workspace: RwLock::new(None),
+        document_map: DashMap::new(),
     });
     Server::new(stdin, stdout, socket).serve(service).await;
     // let rx = stdio_transport::StdioTransport::new().read_messages();
