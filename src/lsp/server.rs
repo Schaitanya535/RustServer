@@ -4,6 +4,7 @@ use crate::lsp::src_tree::*;
 use axum::http::uri;
 use dashmap::mapref::one::Ref;
 use dashmap::DashMap;
+use std::collections::HashSet;
 use std::sync::RwLock;
 use std::{fs::OpenOptions, io::Write};
 
@@ -19,6 +20,12 @@ use tower_lsp::{
     Client, LanguageServer,
 };
 
+pub struct Definition {
+    pub src: String,
+    pub url: Url,
+    pub range: Range,
+}
+
 pub struct Backend {
     pub client: Client,
     pub workspace: RwLock<Option<Url>>,
@@ -26,9 +33,10 @@ pub struct Backend {
     pub log_file_path: String,
 }
 
-impl Backend {
+impl logger for Backend {}
+
+pub trait logger {
     fn log(&self, message: &str) {
-        let language = tree_sitter_sscript::LANGUAGE;
         let utc_time = chrono::Utc::now();
 
         let log_entry = format!(
@@ -41,7 +49,7 @@ impl Backend {
         if let Ok(mut file) = OpenOptions::new()
             .create(true)
             .append(true)
-            .open(&self.log_file_path)
+            .open("/Users/chaitanyasura/projects/RustServer/log.txt".to_string())
         {
             let _ = file.write_all(log_entry.as_bytes());
         } else {
@@ -82,46 +90,46 @@ impl Backend {
             .ok()
     }
 
-    // fn definition(&self, url: Url, ident: &str) -> Option<Definition> {
-    //     let mut visited = HashSet::new();
-    //
-    //     let mut stack = vec![url];
-    //
-    //     while let Some(url) = stack.pop() {
-    //         if visited.contains(&url) {
-    //             continue;
-    //         }
-    //         if let Some(src_tree) = self.load(&url) {
-    //             if let Some(node) = src_tree.definition(ident) {
-    //                 let src = src_tree.src();
-    //                 let src = node.utf8_text(src.as_bytes()).unwrap().to_string();
-    //                 let start = node.start_position();
-    //                 let end = node.end_position();
-    //                 let range = Range {
-    //                     start: Position {
-    //                         line: start.row as _,
-    //                         character: start.column as _,
-    //                     },
-    //                     end: Position {
-    //                         line: end.row as _,
-    //                         character: end.column as _,
-    //                     },
-    //                 };
-    //
-    //                 return Some(Definition { src, url, range });
-    //             }
-    //
-    //             for path in src_tree.includes() {
-    //                 if let Some(url) = self.url(&path) {
-    //                     stack.push(url);
-    //                 }
-    //             }
-    //         }
-    //         visited.insert(url);
-    //     }
-    //
-    //     None
-    // }
+    fn definition(&self, url: Url, ident: &str) -> Option<Definition> {
+        let mut visited = HashSet::new();
+
+        let mut stack = vec![url];
+
+        while let Some(url) = stack.pop() {
+            if visited.contains(&url) {
+                continue;
+            }
+            if let Some(src_tree) = self.load(&url) {
+                if let Some(node) = src_tree.definition(ident) {
+                    let src = src_tree.src();
+                    let src = node.utf8_text(src.as_bytes()).unwrap().to_string();
+                    let start = node.start_position();
+                    let end = node.end_position();
+                    let range = Range {
+                        start: Position {
+                            line: start.row as _,
+                            character: start.column as _,
+                        },
+                        end: Position {
+                            line: end.row as _,
+                            character: end.column as _,
+                        },
+                    };
+
+                    return Some(Definition { src, url, range });
+                }
+
+                // for path in src_tree.includes() {
+                //     if let Some(url) = self.url(&path) {
+                //         stack.push(url);
+                //     }
+                // }
+            }
+            visited.insert(url);
+        }
+
+        None
+    }
 }
 
 #[tower_lsp::async_trait]
@@ -174,79 +182,100 @@ impl LanguageServer for Backend {
         &self,
         params: GotoDeclarationParams,
     ) -> Result<Option<GotoDeclarationResponse>> {
-        // self.client
-        //     .log_message(MessageType::INFO, "goto_definition")
-        //     .await;
-        //
-        // let src_tree = self
-        //     .document_map
-        //     .get(&params.text_document_position_params.text_document.uri)
-        //     .ok_or_else(|| Error::invalid_params("unknown uri"))?;
-        //
-        // let root = src_tree.tree().root_node();
-        // let p = tree_sitter::Point {
-        //     row: params.text_document_position_params.position.line as _,
-        //     column: params.text_document_position_params.position.character as _,
-        // };
-        // let Some(node) = root.descendant_for_point_range(p, p) else {
-        //     return Ok(None);
-        // };
-        //
-        // if node.kind() != "ident" && node.kind() != "type" {
-        //     return Ok(None);
-        // }
-        //
-        // let ident = node
-        //     .utf8_text(src_tree.src().as_bytes())
-        //     .unwrap()
-        //     .to_string();
-        //
-        // drop(src_tree);
-        //
-        Ok(Some(GotoDeclarationResponse::Scalar(Location {
-            uri: params.text_document_position_params.text_document.uri,
-            range: Range {
-                start: Position {
-                    line: 1,
-                    character: 1,
-                },
-                end: Position {
-                    line: 1,
-                    character: 5,
-                },
-            },
-        })))
+        self.client
+            .log_message(MessageType::INFO, "goto_declaration")
+            .await;
 
-        // if let Some(def) = self.definition(
-        //     params.text_document_position_params.text_document.uri,
-        //     &ident,
-        // ) {
-        //     Ok(Some(GotoDefinitionResponse::Scalar(Location {
-        //         uri: def.url,
-        //         range: def.range,
-        //     })))
-        // } else {
-        //     Ok(None)
-        // }
+        let src_tree = self
+            .document_map
+            .get(&params.text_document_position_params.text_document.uri)
+            .ok_or_else(|| Error::invalid_params("unknown uri"))?;
+
+        let root = src_tree.tree().root_node();
+        let p = tree_sitter::Point {
+            row: params.text_document_position_params.position.line as _,
+            column: params.text_document_position_params.position.character as _,
+        };
+        let Some(node) = root.descendant_for_point_range(p, p) else {
+            return Ok(None);
+        };
+        self.log(format!("node: {:?}", node).as_str());
+        self.log(format!("node: {:?}", node.kind()).as_str());
+
+        if node.kind() != "name" {
+            return Ok(None);
+        }
+
+        let ident = node
+            .utf8_text(src_tree.src().as_bytes())
+            .unwrap()
+            .to_string();
+
+        self.log(format!("ident: {:?}", ident).as_str());
+
+        drop(src_tree);
+
+        if let Some(def) = self.definition(
+            params.text_document_position_params.text_document.uri,
+            &ident,
+        ) {
+            Ok(Some(GotoDefinitionResponse::Scalar(Location {
+                uri: def.url,
+                range: def.range,
+            })))
+        } else {
+            Ok(None)
+        }
     }
 
     async fn goto_definition(
         &self,
         params: GotoDefinitionParams,
     ) -> Result<Option<GotoDefinitionResponse>> {
-        Ok(Some(GotoDefinitionResponse::Scalar(Location {
-            uri: params.text_document_position_params.text_document.uri,
-            range: Range {
-                start: Position {
-                    line: 1,
-                    character: 1,
-                },
-                end: Position {
-                    line: 1,
-                    character: 5,
-                },
-            },
-        })))
+        self.client
+            .log_message(MessageType::INFO, "goto_declaration")
+            .await;
+
+        let src_tree = self
+            .document_map
+            .get(&params.text_document_position_params.text_document.uri)
+            .ok_or_else(|| Error::invalid_params("unknown uri"))?;
+
+        let root = src_tree.tree().root_node();
+        let p = tree_sitter::Point {
+            row: params.text_document_position_params.position.line as _,
+            column: params.text_document_position_params.position.character as _,
+        };
+        let Some(node) = root.descendant_for_point_range(p, p) else {
+            return Ok(None);
+        };
+        self.log(format!("node: {:?}", node).as_str());
+        self.log(format!("node: {:?}", node.kind()).as_str());
+
+        if node.kind() != "name" {
+            return Ok(None);
+        }
+
+        let ident = node
+            .utf8_text(src_tree.src().as_bytes())
+            .unwrap()
+            .to_string();
+
+        self.log(format!("ident: {:?}", ident).as_str());
+
+        drop(src_tree);
+
+        if let Some(def) = self.definition(
+            params.text_document_position_params.text_document.uri,
+            &ident,
+        ) {
+            Ok(Some(GotoDefinitionResponse::Scalar(Location {
+                uri: def.url,
+                range: def.range,
+            })))
+        } else {
+            Ok(None)
+        }
     }
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {

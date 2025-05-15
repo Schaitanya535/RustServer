@@ -1,7 +1,10 @@
 use crate::lsp::parser;
+use chrono::format;
 use tower_lsp::lsp_types::*;
 use tree_sitter::StreamingIterator;
-use tree_sitter::{Node, Parser, Point, Query, QueryCursor, Tree, TreeCursor}; // Import the required trait
+use tree_sitter::{Node, Parser, Point, Query, QueryCursor, Tree, TreeCursor};
+
+use super::server::logger; // Import the required trait
 
 #[derive(Debug)]
 pub struct SrcTree {
@@ -9,6 +12,8 @@ pub struct SrcTree {
     // Must be always matched to `src`
     tree: Tree,
 }
+
+impl logger for SrcTree {}
 
 impl SrcTree {
     pub fn new(src: String) -> Self {
@@ -199,85 +204,100 @@ impl SrcTree {
         diagnostics
     }
 
-    // pub fn definition(&self, ident: &str) -> Option<Node> {
-    //     if ident.contains('"') || ident.contains('\\') {
-    //         return None;
-    //     }
-    //
-    //     let queries = &[
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "datatype" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "datatype" (variant (ident) @name) (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "relation" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "function" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "let" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "sort" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //         Query::new(
-    //             &tree_sitter_sscript::LANGUAGE.into(),
-    //             &format!(
-    //                 r#"(command "declare" (ident) @name (#eq? @name "{}")) @command"#,
-    //                 ident
-    //             ),
-    //         )
-    //         .unwrap(),
-    //     ];
-    //
-    //     for query in queries {
-    //         let mut cursor = QueryCursor::new();
-    //         let Some((capture, _)) = cursor
-    //             .captures(query, self.tree.root_node(), self.src.as_bytes())
-    //             .next()
-    //         else {
-    //             continue;
-    //         };
-    //
-    //         let m = capture.captures[0].node;
-    //
-    //         return Some(m);
-    //     }
-    //     None
-    // }
+    pub fn definition(&self, ident: &str) -> Option<Node> {
+        self.log(format!("Searching for definition of {}", ident).as_str());
+        if ident.contains('"') || ident.contains('\\') {
+            return None;
+        }
+        self.log(format!("Searching for definition of {}", ident).as_str());
+
+        // let queries = &[
+        //     Query::new(
+        //         &tree_sitter_sscript::LANGUAGE.into(),
+        //         &format!(
+        //             r#"(command "character" (character_title (name) @name) @character_title (#eq? @name "{}")) @command"#,
+        //             ident
+        //         ),
+        //     )
+        //     .unwrap(),
+        //      Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "datatype" (variant (ident) @name) (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "relation" (ident) @name (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "function" (ident) @name (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "let" (ident) @name (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "sort" (ident) @name (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // Query::new(
+        //     &tree_sitter_sscript::LANGUAGE.into(),
+        //     &format!(
+        //         r#"(command "declare" (ident) @name (#eq? @name "{}")) @command"#,
+        //         ident
+        //     ),
+        // )
+        // .unwrap(),
+        // ];
+
+        let mut cursor = QueryCursor::new();
+        let query = &Query::new(
+            &tree_sitter_sscript::LANGUAGE.into(),
+            &format!(
+                "(character_title (name) @name (#eq? @name {})) @character_title",
+                ident
+            ),
+        )
+        .unwrap();
+
+        let mut captures = cursor.captures(query, self.tree.root_node(), self.src.as_bytes());
+
+        let Some((capture, _)) = captures.next() else {
+            self.log(format!("No definition found for {}", ident).as_str());
+            return None;
+        };
+        let m = capture.captures[0].node;
+        self.log(
+            format!(
+                "Found definition for {}: {}",
+                ident,
+                m.utf8_text(self.src.as_bytes()).unwrap()
+            )
+            .as_str(),
+        );
+
+        return Some(m);
+    }
 
     // pub fn completion(&self, pos: Point) -> Vec<CompletionItem> {
     //     fn is_root_command(node: Node) -> bool {
