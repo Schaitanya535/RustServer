@@ -161,7 +161,7 @@ impl SrcTree {
         while let Some(mut cursor) = stack.pop() {
             let n = cursor.node();
 
-            if n.is_error() || n.is_missing() || n.kind() == "top_parens" {
+            if n.is_error() || n.is_missing() {
                 let start = n.start_position();
                 let end = n.end_position();
                 let message = if n.has_error() && n.is_missing() {
